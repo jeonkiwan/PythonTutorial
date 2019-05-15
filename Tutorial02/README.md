@@ -1,9 +1,11 @@
 Tutorial for Machine Learning using Python
 ====================================================================
 
-## [Step 1] Download [Data Preparation NoteBook](https://raw.github.com/jeonkiwan/PythonTutorial/master/Tutorial02/DataPreparation.ipynb) for participating the class.
+* <b>  Download [Data Preparation NoteBook](https://raw.github.com/jeonkiwan/PythonTutorial/master/Tutorial02/DataPreparation.ipynb) for participating the class. </b>
 
-## [Step 2] Download [Tutorial NoteBook](https://raw.github.com/jeonkiwan/PythonTutorial/master/Tutorial02/Tutorial02.ipynb) for participating the class.
+* <b> Upload to the google colab and Excute all cells </b>
+
+* <b> Download [Tutorial NoteBook](https://raw.github.com/jeonkiwan/PythonTutorial/master/Tutorial02/Tutorial02.ipynb) for participating the class. </b>
 
 
 
