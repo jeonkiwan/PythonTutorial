@@ -4,7 +4,21 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 
-import vtk
+# import vtk
+
+# important! ... initialize rendering instance  
+import vtkmodules.vtkRenderingOpenGL2
+
+from vtkmodules.vtkIOImage import vtkPNGWriter
+from vtkmodules.vtkRenderingFreeType import vtkVectorText
+from vtkmodules.vtkRenderingCore import (vtkFollower,
+                                         vtkWindowToImageFilter,
+                                         vtkPolyDataMapper,
+                                         vtkActor,
+                                         vtkRenderWindow,
+                                         vtkRenderWindowInteractor,
+                                         vtkRenderer)
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
 
 wdbc = pd.read_csv("./wdbc.csv")
 
@@ -29,32 +43,32 @@ scaler.fit(train_X)
 scaled_train_X = scaler.transform(train_X)
 scaled_test_X = scaler.transform(test_X)
 
-def vtk_show(renderer, width=800, height=800):
+def render(renderer, width=800, height=800):
     """
     Takes vtkRenderer instance and returns an IPython Image with the rendering.
     """
-    renderWindow = vtk.vtkRenderWindow()
-    renderWindow.SetOffScreenRendering(1)
-    renderWindow.AddRenderer(renderer)
-    renderWindow.SetSize(width, height)
-    renderWindow.Render()
+    rw = vtkRenderWindow()
+    rw.SetOffScreenRendering(1)
+    rw.AddRenderer(renderer)
+    rw.SetSize(width, height)
+    rw.Render()
      
-    windowToImageFilter = vtk.vtkWindowToImageFilter()
-    windowToImageFilter.SetInput(renderWindow)
+    windowToImageFilter = vtkWindowToImageFilter()
+    windowToImageFilter.SetInput(rw)
     windowToImageFilter.Update()
      
-    writer = vtk.vtkPNGWriter()
+    writer = vtkPNGWriter()
     writer.SetWriteToMemory(1)
     writer.SetInputConnection(windowToImageFilter.GetOutputPort())
     writer.Write()
     data = bytes(memoryview(writer.GetResult()))
     
-    return Image(data)
+    # return Image(data) ??
 
 
 def plot_embedding_3d(X, Y, title=None):
 
-    renderer = vtk.vtkRenderer()
+    renderer = vtkRenderer()
     renderer.GradientBackgroundOn();
     renderer.SetBackground2(0.05, 0.05, 0.05)
     renderer.SetBackground(0.25, 0.25, 0.31)
@@ -66,11 +80,11 @@ def plot_embedding_3d(X, Y, title=None):
 
     for i, pos in enumerate(X):
 #         print(i, pos)
-        text = vtk.vtkVectorText()
+        text = vtkVectorText()
         text.SetText('M' if Y[i] > 0 else 'B')
-        mapper = vtk.vtkPolyDataMapper()
+        mapper = vtkPolyDataMapper()
         mapper.SetInputConnection(text.GetOutputPort())
-        actor = vtk.vtkFollower()
+        actor = vtkFollower()
         actor.SetMapper(mapper)
         actor.SetScale(0.02, 0.02, 0.02)
         actor.AddPosition(pos)
@@ -84,15 +98,15 @@ def plot_embedding_3d(X, Y, title=None):
     renderer.ResetCamera()
     renderer.ResetCameraClippingRange()
 
-    renwin = vtk.vtkRenderWindow()
-    renwin.AddRenderer(renderer)
-    renwin.SetSize(800, 800)
-    renwin.Render()
+    rw = vtkRenderWindow()
+    rw.AddRenderer(renderer)
+    rw.SetSize(800, 800)
+    rw.Render()
 
     
-    iren = vtk.vtkRenderWindowInteractor()
-    iren.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
-    iren.SetRenderWindow(renwin)
+    iren = vtkRenderWindowInteractor()
+    iren.SetInteractorStyle(vtkInteractorStyleTrackballCamera())
+    iren.SetRenderWindow(rw)
     iren.Start()
 
 #     focal = camera.GetFocalPoint()
@@ -109,6 +123,8 @@ def plot_embedding_3d(X, Y, title=None):
     # renderer.ResetCameraClippingRange()
         
     return renderer
+
+
 
 # pca = PCA(n_components=3).fit(train_X)
 # X_pca = pca.transform(train_X)
